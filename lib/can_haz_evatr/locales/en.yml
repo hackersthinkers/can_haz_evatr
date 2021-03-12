@@ -1,0 +1,8 @@
+en:
+  errors:
+    messages:
+      invalid_evatr: is not a valid vat number
+      invalid_vat_city: City does not match
+      invalid_vat_street: Street does not match
+      invalid_vat_zip: Zip code does not match
+      invalid_vat_name: Name does not match

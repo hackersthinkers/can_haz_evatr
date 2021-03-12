@@ -1,0 +1,8 @@
+de:
+  errors:
+    messages:
+      invalid_evatr: ist keine gültige UStId-Nr
+      invalid_vat_city: Stadt stimmt nicht überein
+      invalid_vat_street: Straße stimmt nicht überein
+      invalid_vat_zip: PLZ stimmt nicht überein
+      invalid_vat_name: Name stimmt nicht überein
