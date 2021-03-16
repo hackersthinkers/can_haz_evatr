@@ -9,8 +9,8 @@ module ActiveModel
           **CanHazEvatr::Check.config.mapping.call(record)
         )
 
-        if evat.config.recorder
-          evat.recorder.constantize.create(record: record, response: evat.response)
+        if evat.config.recorder && record.persisted?
+          evat.recorder.constantize.create(record_id: record.id, record_type: record.class, response: evat.response)
         end
 
         record.errors.add(attribute, :invalid_evatr) unless evat.valid?
