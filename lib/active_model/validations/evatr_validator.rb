@@ -13,7 +13,13 @@ module ActiveModel
           evat.recorder.constantize.create(record_id: record.id, record_type: record.class, response: evat.response)
         end
 
+        unless evat.success
+          record.errors.add(attribute, :failure_evatr)
+          return
+        end
+
         record.errors.add(attribute, :invalid_evatr) unless evat.valid?
+
 
         evat.errors.each do |error|
           record.errors.add(attribute, :"invalid_vat_#{error}")

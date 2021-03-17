@@ -1,6 +1,7 @@
 en:
   errors:
     messages:
+      failure_evatr: cannot be validated right now, please try again later
       invalid_evatr: is not a valid vat number
       invalid_vat_city: City does not match
       invalid_vat_street: Street does not match

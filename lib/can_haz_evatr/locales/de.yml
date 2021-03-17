@@ -1,6 +1,7 @@
 de:
   errors:
     messages:
+      failure_evatr: kann derzeit nicht geprüft werden, bitte erneut versuchen
       invalid_evatr: ist keine gültige UStId-Nr
       invalid_vat_city: Stadt stimmt nicht überein
       invalid_vat_street: Straße stimmt nicht überein
