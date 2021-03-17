@@ -36,11 +36,13 @@ module CanHazEvatr
     attr_accessor :vat, :name, :city, :street, :zip
 
     attribute :response, :string, default: ''
+    attribute :success, :boolean, default: false
 
     def self.check(vat:, name:, city:, street:, zip:)
       vat = new(vat: vat, name: name, city: city, street: street, zip: zip)
 
       vat.response = vat.request.body
+      vat.success  = vat.request.success?
 
       vat
     end
@@ -69,7 +71,7 @@ module CanHazEvatr
     end
 
     def request
-      Faraday.post('https://evatr.bff-online.de/evatrRPC', {
+      @request ||= Faraday.post('https://evatr.bff-online.de/evatrRPC', {
         UstId_1:     config.requester_vat,
         UstId_2:     vat,
         Firmenname:  name,
