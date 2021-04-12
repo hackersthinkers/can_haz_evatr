@@ -29,7 +29,7 @@ RSpec.describe CanHazEvatr do
     end
 
     describe '#errors' do
-      let(:response) { param_generator(city_result: 'B')}
+      let(:response) { param_generator(city_result: 'B') }
 
       it 'may find the fields with errors' do
         expect(subject.errors).to include(:city)
@@ -37,19 +37,28 @@ RSpec.describe CanHazEvatr do
     end
 
     describe '#valid?' do
-      let(:response) { param_generator(result: '200')}
+      let(:response) { param_generator(result: '200') }
 
       it 'may be invalid' do
         expect(subject.valid?).to be(true)
       end
 
       describe 'with error code above 200' do
-        let(:response) { param_generator(result: '201')}
+        let(:response) { param_generator(result: '201') }
 
         it 'will be invalid' do
           expect(subject.valid?).to be(false)
         end
       end
     end
+
+    describe '#checked_vat_id' do
+      let(:response) { param_generator }
+
+      it 'may find the fields with errors' do
+        expect(subject.checked_vat_id).to eq('PTXXXXXXXX')
+      end
+    end
+
   end
 end

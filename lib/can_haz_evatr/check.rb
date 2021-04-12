@@ -60,7 +60,7 @@ module CanHazEvatr
     end
 
     def error_code
-      parsed.at_xpath('//data[value/string = "ErrorCode"]').elements.last.text.to_i
+      parsed.at_xpath('//data[value/string = "ErrorCode"]')&.elements&.last&.text.to_i
     end
 
     def results
@@ -68,6 +68,10 @@ module CanHazEvatr
         each_with_object({}) do |result, hash|
           hash[FIELD_MAPPING[result.elements.first.text]] = RESULT_MAPPING[result.elements.last.text]
         end
+    end
+
+    def checked_vat_id
+      parsed.at_xpath('//data[value/string = "UstId_2"]')&.elements&.last&.text
     end
 
     def request
