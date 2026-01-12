@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 RSpec.describe CanHazEvatr do
   def param_generator(hash = {})
     defaults = {

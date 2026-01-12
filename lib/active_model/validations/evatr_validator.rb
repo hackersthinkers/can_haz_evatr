@@ -4,13 +4,15 @@ module ActiveModel
   module Validations
     class EvatrValidator < EachValidator
       def validate_each(record, attribute, value)
-        evat = CanHazEvatr::Check.check(
+        check_class = CanHazEvatr.check_class
+
+        evat = check_class.check(
           vat: value,
-          **CanHazEvatr::Check.config.mapping.call(record)
+          **check_class.config.mapping.call(record)
         )
 
         if evat.config.recorder && record.persisted?
-          evat.recorder.constantize.create(record_id: record.id, record_type: record.class, response: evat.response)
+          evat.config.recorder.constantize.create(record_id: record.id, record_type: record.class, response: evat.response)
         end
 
         unless evat.success
