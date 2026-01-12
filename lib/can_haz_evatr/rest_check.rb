@@ -53,7 +53,8 @@ module CanHazEvatr
       vat = new(vat: vat, name: name, city: city, street: street, zip: zip)
 
       response = vat.request
-      vat.response = response.body
+
+      vat.response = response.body.to_json
       vat.success  = response.success?
 
       vat

@@ -48,7 +48,7 @@ RSpec.describe CanHazEvatr::RestCheck do
     end
 
     it 'stores the response' do
-      expect(subject.response).to eq(response_body)
+      expect(subject.response).to eq(response_body.to_json)
     end
   end
 
