@@ -24,8 +24,18 @@ RSpec.describe CanHazEvatr::RestCheck do
   end
 
   describe '.check' do
-    let(:response_body) { rest_response_generator }
-    let(:mock_response) { double('response', body: response_body, success?: true) }
+    let(:response_body_hash) do
+      {
+        id: 'd6f1148c48118a14',
+        anfrageZeitpunkt: '2026-01-12T09:37:35.561855733+01:00',
+        status: 'evatr-0000',
+        ergFirmenname: 'A',
+        ergStrasse: 'A',
+        ergPlz: 'A',
+        ergOrt: 'A'
+      }
+    end
+    let(:mock_response) { double('response', body: response_body_hash, success?: true) }
 
     before do
       described_class.config.requester_vat = 'DE123456789'
@@ -47,8 +57,9 @@ RSpec.describe CanHazEvatr::RestCheck do
       expect(subject.success).to be(true)
     end
 
-    it 'stores the response' do
-      expect(subject.response).to eq(response_body.to_json)
+    it 'stores the response with merged angefragteUstid' do
+      expected_response = response_body_hash.merge(angefragteUstid: 'PT123456789')
+      expect(subject.response).to eq(expected_response.to_json)
     end
   end
 

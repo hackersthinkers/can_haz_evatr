@@ -50,14 +50,14 @@ module CanHazEvatr
     attribute :success, :boolean, default: false
 
     def self.check(vat:, name:, city:, street:, zip:)
-      vat = new(vat: vat, name: name, city: city, street: street, zip: zip)
+      instance = new(vat: vat, name: name, city: city, street: street, zip: zip)
 
-      response = vat.request
+      response = instance.request
 
-      vat.response = response.body.to_json
-      vat.success  = response.success?
+      instance.response = response.body.merge(angefragteUstid: instance.vat).to_json
+      instance.success  = response.success?
 
-      vat
+      instance
     end
 
     def valid?
