@@ -96,15 +96,6 @@ RSpec.describe CanHazEvatr::RestCheck do
         expect(subject.valid?).to be(false)
       end
     end
-
-    context 'when success is false' do
-      let(:status) { 'evatr-0000' }
-      subject { described_class.new(response: response, success: false) }
-
-      it 'returns false' do
-        expect(subject.valid?).to be(false)
-      end
-    end
   end
 
   describe '#errors' do

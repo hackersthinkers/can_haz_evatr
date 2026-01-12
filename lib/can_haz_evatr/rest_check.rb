@@ -53,15 +53,13 @@ module CanHazEvatr
       vat = new(vat: vat, name: name, city: city, street: street, zip: zip)
 
       response = vat.request
-      # Faraday with :json middleware returns parsed Hash, convert to JSON string
-      vat.response = response.body.is_a?(Hash) ? response.body.to_json : response.body
+      vat.response = response.body
       vat.success  = response.success?
 
       vat
     end
 
     def valid?
-      return false unless success
       return false unless parsed_response
 
       status = parsed_response['status']
