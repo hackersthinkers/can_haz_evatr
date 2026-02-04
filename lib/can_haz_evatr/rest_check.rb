@@ -74,8 +74,7 @@ module CanHazEvatr
       return false unless parsed_response
 
       status = parsed_response['status']
-      STATUS_CODE_MAPPING.key?(status) &&
-        [:valid, :valid_from_date, :previously_valid, :valid_with_notes].include?(STATUS_CODE_MAPPING[status])
+      STATUS_CODE_MAPPING.key?(status) && [:valid].include?(STATUS_CODE_MAPPING[status]) && errors.empty?
     end
 
     def errors

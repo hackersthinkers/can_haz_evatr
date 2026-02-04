@@ -212,24 +212,24 @@ RSpec.describe CanHazEvatr::RestCheck do
     context 'with evatr-2002 status' do
       let(:status) { 'evatr-2002' }
 
-      it 'returns true (valid from date)' do
-        expect(subject.valid?).to be(true)
+      it 'returns false (valid_from_date is not strictly valid)' do
+        expect(subject.valid?).to be(false)
       end
     end
 
     context 'with evatr-2006 status' do
       let(:status) { 'evatr-2006' }
 
-      it 'returns true (previously valid)' do
-        expect(subject.valid?).to be(true)
+      it 'returns false (previously_valid is not strictly valid)' do
+        expect(subject.valid?).to be(false)
       end
     end
 
     context 'with evatr-2008 status' do
       let(:status) { 'evatr-2008' }
 
-      it 'returns true (valid with notes)' do
-        expect(subject.valid?).to be(true)
+      it 'returns false (valid_with_notes is not strictly valid)' do
+        expect(subject.valid?).to be(false)
       end
     end
 
