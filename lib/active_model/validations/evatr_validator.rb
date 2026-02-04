@@ -6,26 +6,22 @@ module ActiveModel
       def validate_each(record, attribute, value)
         check_class = CanHazEvatr.check_class
 
-        evat = check_class.check(
-          vat: value,
-          **check_class.config.mapping.call(record)
-        )
+        evat = check_class.check_record(record, vat: value)
 
-        if evat.config.recorder && record.persisted?
-          evat.config.recorder.constantize.create(record_id: record.id, record_type: record.class, response: evat.response)
-        end
+        if check_class.config.job_class
+          check_class.config.job_class.constantize.perform_later(record, attribute)
+        else
+          unless evat.success
+            record.errors.add(attribute, :failure_evatr)
+            return
+          end
 
-        unless evat.success
-          record.errors.add(attribute, :failure_evatr)
-          return
-        end
+          record.errors.add(attribute, :invalid_evatr) unless evat.valid?
 
-        record.errors.add(attribute, :invalid_evatr) unless evat.valid?
-
-
-        evat.errors.each do |error|
-          record.errors.add(attribute, :"invalid_vat_#{error}")
-        end
+          evat.errors.each do |error|
+            record.errors.add(attribute, :"invalid_vat_#{error}")
+          end
+        end        
       end
     end
   end

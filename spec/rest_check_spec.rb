@@ -63,6 +63,139 @@ RSpec.describe CanHazEvatr::RestCheck do
     end
   end
 
+  describe '.check_record' do
+    let(:response_body_hash) do
+      {
+        id: 'd6f1148c48118a14',
+        anfrageZeitpunkt: '2026-01-12T09:37:35.561855733+01:00',
+        status: 'evatr-0000',
+        ergFirmenname: 'A',
+        ergStrasse: 'A',
+        ergPlz: 'A',
+        ergOrt: 'A'
+      }
+    end
+    let(:mock_response) { double('response', body: response_body_hash, success?: true) }
+    let(:record) do
+      double('record',
+        id: 1,
+        class: 'TestRecord',
+        full_name: 'Test Company',
+        city: 'Berlin',
+        street: 'Test Street',
+        zip: '10111',
+        persisted?: persisted
+      )
+    end
+    let(:persisted) { false }
+
+    before do
+      described_class.config.requester_vat = 'DE123456789'
+      described_class.config.recorder = nil
+      allow_any_instance_of(described_class).to receive(:request).and_return(mock_response)
+    end
+
+    after do
+      described_class.config.recorder = nil
+    end
+
+    subject { described_class.check_record(record, vat: 'PT123456789') }
+
+    it 'calls check with vat and mapped record attributes' do
+      expect(described_class).to receive(:check).with(
+        vat: 'PT123456789',
+        name: 'Test Company',
+        city: 'Berlin',
+        street: 'Test Street',
+        zip: '10111'
+      ).and_call_original
+
+      subject
+    end
+
+    it 'returns a check instance' do
+      expect(subject).to be_a(described_class)
+      expect(subject.success).to be(true)
+    end
+
+    context 'with custom mapping' do
+      before do
+        described_class.config.mapping = ->(rec) {
+          {
+            name: rec.full_name.upcase,
+            city: rec.city,
+            street: rec.street,
+            zip: rec.zip
+          }
+        }
+      end
+
+      after do
+        described_class.config.mapping = ->(rec) {
+          { name: rec.full_name, city: rec.city, street: rec.street, zip: rec.zip }
+        }
+      end
+
+      it 'uses the custom mapping' do
+        expect(described_class).to receive(:check).with(
+          vat: 'PT123456789',
+          name: 'TEST COMPANY',
+          city: 'Berlin',
+          street: 'Test Street',
+          zip: '10111'
+        ).and_call_original
+
+        subject
+      end
+    end
+
+    context 'when recorder is configured' do
+      let(:recorder_class) { double('RecorderClass') }
+
+      before do
+        described_class.config.recorder = 'VatCheckRecord'
+        allow_any_instance_of(described_class).to receive_message_chain(:config, :recorder).and_return('VatCheckRecord')
+        stub_const('VatCheckRecord', recorder_class)
+      end
+
+      context 'and record is persisted' do
+        let(:persisted) { true }
+
+        it 'creates a recorder entry' do
+          expect(recorder_class).to receive(:create).with(
+            record_id: 1,
+            record_type: 'TestRecord',
+            response: anything
+          )
+
+          subject
+        end
+      end
+
+      context 'and record is not persisted' do
+        let(:persisted) { false }
+
+        it 'does not create a recorder entry' do
+          expect(recorder_class).not_to receive(:create)
+
+          subject
+        end
+      end
+    end
+
+    context 'when recorder is not configured' do
+      before do
+        described_class.config.recorder = nil
+      end
+
+      let(:persisted) { true }
+
+      it 'does not attempt to create a recorder entry' do
+        expect(subject).to be_a(described_class)
+      end
+    end
+  end
+
   describe '#valid?' do
     let(:response) { rest_response_generator(status: status) }
 

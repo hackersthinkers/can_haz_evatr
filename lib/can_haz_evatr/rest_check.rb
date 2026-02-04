@@ -33,7 +33,7 @@ module CanHazEvatr
     include ActiveModel::Attributes
     include ActiveSupport::Configurable
 
-    config_accessor :requester_vat, :recorder, :mapping
+    config_accessor :requester_vat, :recorder, :mapping, :job_class
 
     self.config.mapping = ->(record) {
       {
@@ -56,6 +56,16 @@ module CanHazEvatr
 
       instance.response = response.body.merge(angefragteUstid: instance.vat).to_json
       instance.success  = response.success?
+
+      instance
+    end
+
+    def self.check_record(record, vat:)
+      instance = check(vat: vat, **config.mapping.call(record))
+      
+      if instance.config.recorder && record.persisted?
+        instance.config.recorder.constantize.create(record_id: record.id, record_type: record.class, response: instance.response)
+      end
 
       instance
     end
