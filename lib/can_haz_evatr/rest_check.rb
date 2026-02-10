@@ -54,7 +54,7 @@ module CanHazEvatr
 
       response = instance.request
 
-      instance.response = response.body.merge('angefragteUstid' => instance.vat).to_json
+      instance.response = response.body.merge('angefragteUstid' => instance.vat).to_json if response.body.is_a?(Hash)
       instance.success  = response.success?
 
       instance
