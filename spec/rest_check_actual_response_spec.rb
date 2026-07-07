@@ -57,8 +57,8 @@ RSpec.describe CanHazEvatr::RestCheck, 'with actual API response' do
       }.to_json
     end
 
-    it 'is still valid (VAT ID is valid)' do
-      expect(subject.valid?).to be(true)
+    it 'is invalid when fields do not match' do
+      expect(subject.valid?).to be(false)
     end
 
     it 'reports errors for non-matching fields' do
