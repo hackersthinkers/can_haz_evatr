@@ -1,4 +1,5 @@
-require "active_support/configurable"
+require "active_support/ordered_options"
+require "active_support/core_ext/class/attribute"
 require 'active_model'
 require 'json'
 require 'faraday'
@@ -31,9 +32,8 @@ module CanHazEvatr
 
     include ActiveModel::Model
     include ActiveModel::Attributes
-    include ActiveSupport::Configurable
 
-    config_accessor :requester_vat, :recorder, :mapping, :job_class
+    class_attribute :config, default: ActiveSupport::OrderedOptions.new
 
     self.config.mapping = ->(record) {
       {
